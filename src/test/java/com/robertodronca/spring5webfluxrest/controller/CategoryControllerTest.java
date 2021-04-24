@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 
 class CategoryControllerTest {
 
@@ -80,6 +81,23 @@ class CategoryControllerTest {
         Mono<Category> categoryMono = Mono.just(Category.builder().description("Cat").build());
 
         webTestClient.put()
+                .uri("/api/v1/categories/sddacd")
+                .body(categoryMono, Category.class)
+                .exchange()
+                .expectStatus()
+                .isOk();
+    }
+    @Test
+    void testPatchCategory() {
+        BDDMockito.given(categoryRepository.findById(anyString()))
+                .willReturn(Mono.just(Category.builder().build()));
+
+        BDDMockito.given(categoryRepository.save(any(Category.class)))
+                .willReturn(Mono.just(Category.builder().build()));
+
+        Mono<Category> categoryMono = Mono.just(Category.builder().description("Cat").build());
+
+        webTestClient.patch()
                 .uri("/api/v1/categories/sddacd")
                 .body(categoryMono, Category.class)
                 .exchange()
